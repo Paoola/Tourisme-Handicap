@@ -35,6 +35,28 @@ class Place
      */
     private $address;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="handicap_moteur", type="string", length=255)
+     */
+    private $handicap_moteur;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="created_at", type="datetime")
+     */
+    private $created_at;
+
+    /**
+     * @return string
+     */
+    public function getCreatedAt()
+    {
+        return $this->created_at;
+    }
+
 
     /**
      * Get id
@@ -94,6 +116,29 @@ class Place
         return $this->address;
     }
 
+    /**
+     * @return string
+     */
+    public function getHandicapMoteur()
+    {
+        return $this->handicap_moteur;
+    }
+
+    /**
+     * @param string $handicap_moteur
+     */
+    public function setHandicapMoteur($handicap_moteur)
+    {
+        $this->handicap_moteur = $handicap_moteur;
+    }
+
+    /**
+     * @param string $created_at
+     */
+    public function setCreatedAt($created_at)
+    {
+        $this->created_at = $created_at;
+    }
 
 }
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -9,37 +10,50 @@ use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\Place;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Class PlaceController
+ * @package AppBundle\Controller
+ */
 class PlaceController extends Controller
 {
-  /**
-     * @Route("/places", name="places_list")
+
+
+    /**
+     * @Route("/import/places", name="places_extract")
      * @Method({"GET"})
      */
-    public function getPlacesAction(Request $request)
+    public function importPlacesFromJson()
     {
         $str = file_get_contents('https://www.data.gouv.fr/fr/datasets/r/5927eba6-6375-4d26-87a4-6ddf7fb493a9');
-        $json = json_decode($str, true);
-
-        $places = [];
-
-        foreach ($json as $key => $value) {
-            $places['handicap_moteur'] = $value['fields']['handicap_moteur'];
-            $places['lieu'] = $value['fields']['etablissement'];
-            $places['ville'] = $value['fields']['ville'];
-
-        }
-        var_dump(count($places));
-        $place = new Place;
-
-        $place->setAddress($places["ville"]);
-        $place->setName($places["lieu"]);
+        $json = json_decode($str , true);
 
         $entityManager = $this->getDoctrine()->getManager();
 
-        $entityManager->persist($place);
-        $entityManager->flush();
+        for ($i = 0; $i < count($json); $i++) {
+            foreach ($json as $row) {
+
+                $place = new Place;
+
+                $place->setAddress($row['fields']['ville']);
+                $place->setName($row['fields']['etablissement']);
+                $place->setHandicapMoteur($row['fields']['handicap_moteur']);
+                $place->setCreatedAt(new \DateTime('now'));
+
+                $entityManager->persist($place);
+                $entityManager->flush();
+            }
+        }
+
+        return new JsonResponse('ok');
+    }
 
 
+    /**
+     * @Route("/list", name="places_list")
+     * @Method({"GET"})
+     */
+    public function getlistPlaces()
+    {
         $places = $this->get('doctrine.orm.entity_manager')
             ->getRepository('AppBundle:Place')
             ->findAll();
@@ -48,48 +62,44 @@ class PlaceController extends Controller
         $formatted = [];
         foreach ($places as $place) {
             $formatted[] = [
-                'id' => $place->getId(),
-                'name' => $place->getName(),
-                'address' => $place->getAddress(),
+                'id' => $place->getId() ,
+                'name' => $place->getName() ,
+                'address' => $place->getAddress() ,
+                'handicap_moteur' => $place->getHandicapMoteur() ,
+                'created_at' => $place->getHandicapMoteur() ,
             ];
         }
 
 
         return new JsonResponse($formatted);
+
     }
 
 
-    public static function extract()
+    /**
+     * @Route("/places/{place_id}", name="places_one")
+     * @Method({"GET"})
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getPlaceAction(Request $request)
     {
-        $str = file_get_contents('https://www.data.gouv.fr/fr/datasets/r/5927eba6-6375-4d26-87a4-6ddf7fb493a9');
-        $json = json_decode($str, true);
+        $place = $this->get('doctrine.orm.entity_manager')
+            ->getRepository('AppBundle:Place')
+            ->find($request->get('place_id'));
 
-        $places = [];
-
-        foreach ($json as $key => $value) {
-            $places['handicap_moteur'] = $value['fields']['handicap_moteur'];
-            $places['lieu'] = $value['fields']['etablissement'];
-            $places['ville'] = $value['fields']['ville'];
-
+        if (empty($place)) {
+            return new JsonResponse(['message' => 'Place not found'] , Response::HTTP_NOT_FOUND);
         }
+        /* @var $formatted Place[] */
 
-        return $places;
-    }
+        $formatted = [
+            'id' => $place->getId() ,
+            'name' => $place->getName() ,
+            'address' => $place->getAddress() ,
+        ];
 
-    public function persist($places)
-    {
-        $place = new Place;
-
-        $place->setAddress($places["ville"]);
-        $place->setName($places["lieu"]);
-
-        $entityManager = $this->getDoctrine()->getManager();
-
-        $entityManager->persist($place);
-        $entityManager->flush();
-
-        var_dump(new Response('Saved new product with id '.$place->getId()));
-
+        return new JsonResponse($formatted);
     }
 
 }
