@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use  AppBundle\Entity\Place;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
@@ -29,14 +30,5 @@ class ExtractCommand extends Command
             ->setHelp('This command allows you to create a user...')
         ;
     }
-
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        return PlaceController::extract();
-
-    }
-
-
-
 
 }

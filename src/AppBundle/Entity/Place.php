@@ -1,17 +1,34 @@
 <?php
 
+# src/AppBundle/Entity/Place.php
+
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Place
- *
- * @ORM\Table(name="place")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\PlaceRepository")
+ * @ORM\Entity()
+ * @ORM\Table(name="place",
+ *      uniqueConstraints={@ORM\UniqueConstraint(name="places_name_unique",columns={"name"})}
+ * )
  */
 class Place
 {
+
+    /**
+     * @ORM\OneToMany(targetEntity="Theme", mappedBy="place")
+     * @var Theme[]
+     */
+    protected $themes;
+
+
+    public function __construct()
+    {
+        $this->prices = new ArrayCollection();
+        $this->themes = new ArrayCollection();
+    }
+
     /**
      * @var int
      *
@@ -41,22 +58,6 @@ class Place
      * @ORM\Column(name="handicap_moteur", type="string", length=255)
      */
     private $handicap_moteur;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     */
-    private $created_at;
-
-    /**
-     * @return string
-     */
-    public function getCreatedAt()
-    {
-        return $this->created_at;
-    }
-
 
     /**
      * Get id
@@ -140,5 +141,20 @@ class Place
         $this->created_at = $created_at;
     }
 
-}
+    /**
+     * @return Theme[]
+     */
+    public function getThemes()
+    {
+        return $this->themes;
+    }
 
+    /**
+     * @param Theme[] $themes
+     */
+    public function setThemes($themes)
+    {
+        $this->themes = $themes;
+    }
+
+}

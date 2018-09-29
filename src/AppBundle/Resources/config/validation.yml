@@ -1,0 +1,52 @@
+AppBundle\Entity\Partner:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: email
+    properties:
+        firstname:
+            - NotBlank: ~
+            - Type: string
+        lastname:
+            - NotBlank: ~
+            - Type: string
+        email:
+            - NotBlank: ~
+            - Email: ~
+
+AppBundle\Entity\Theme:
+    properties:
+        name:
+            - NotNull: ~
+            - Choice:
+                choices: [art, architecture, history, science-fiction, sport]
+        value:
+            - NotNull: ~
+            - Type: numeric
+            - GreaterThan:
+                value: 0
+            - LessThanOrEqual:
+                value: 10
+
+AppBundle\Entity\Preferences:
+    properties:
+        name:
+            - NotNull: ~
+            - Choice:
+                choices: [art, architecture, history, science-fiction, sport]
+        value:
+            - NotNull: ~
+            - Type: numeric
+            - GreaterThan:
+                value: 0
+            - LessThanOrEqual:
+                value: 10
+
+AppBundle\Entity\Place:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: name
+    properties:
+        name:
+            - NotBlank: ~
+            - Type: string
+        address:
+            - NotBlank: ~
+            - Type: string

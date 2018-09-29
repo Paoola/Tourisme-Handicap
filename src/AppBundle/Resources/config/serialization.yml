@@ -1,0 +1,46 @@
+AppBundle\Entity\Place:
+    attributes:
+        id:
+            groups: ['place','theme']
+        name:
+            groups: ['place','theme']
+        address:
+            groups: ['place', 'theme']
+        themes:
+            groups: ['place']
+
+AppBundle\Entity\Theme:
+    attributes:
+        id:
+            groups: ['place', 'theme']
+        name:
+            groups: ['place', 'theme']
+        value:
+            groups: ['place', 'theme']
+        place:
+            groups: ['theme']
+
+
+AppBundle\Entity\Partner:
+    attributes:
+        id:
+            groups: ['user', 'preference']
+        firstname:
+            groups: ['user', 'preference']
+        lastname:
+            groups: ['user', 'preference']
+        email:
+            groups: ['user', 'preference']
+        preferences:
+            groups: ['user']
+
+AppBundle\Entity\Preference:
+    attributes:
+        id:
+            groups: ['user', 'preference']
+        name:
+            groups: ['user', 'preference']
+        value:
+            groups: ['user', 'preference']
+        user:
+            groups: ['preference']
