@@ -9,6 +9,8 @@ parameters:
     locale: en
 
 framework:
+    serializer:
+        enabled: true
     #esi: ~
     #translator: { fallbacks: ['%locale%'] }
     secret: '%secret%'
@@ -46,6 +48,7 @@ doctrine:
         user: '%database_user%'
         password: '%database_password%'
         charset: UTF8
+        unix_socket: /Applications/MAMP/tmp/mysql/mysql.sock
         # if using pdo_sqlite as your database driver:
         #   1. add the path in parameters.yml
         #     e.g. database_path: '%kernel.project_dir%/var/data/data.sqlite'
@@ -69,3 +72,12 @@ swiftmailer:
 sensio_framework_extra:
    router:
         annotations: false
+fos_rest:
+    routing_loader:
+        include_format: false
+    view:
+        view_response_listener: true
+    format_listener:
+        rules:
+            - { path: '^/', priorities: ['json'], fallback_format: 'json' }
+

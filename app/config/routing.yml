@@ -1,3 +1,19 @@
 app:
     resource: '@AppBundle/Controller/'
     type: annotation
+
+places:
+    type:     rest
+    resource: AppBundle\Controller\PlaceController
+
+users:
+    type:     rest
+    resource: AppBundle\Controller\PartnerController
+
+preferences:
+    type:     rest
+    resource: AppBundle\Controller\PreferenceController
+
+themes:
+    type:     rest
+    resource: AppBundle\Controller\ThemeController

@@ -2,13 +2,18 @@
 
 namespace AppBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use AppBundle\Entity\Place;
 use Symfony\Component\HttpFoundation\Response;
+use FOS\RestBundle\Controller\Annotations\Get;
+use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\View\View;
+use FOS\RestBundle\View\ViewHandler;
+use AppBundle\Entity\Place;
+
+
 
 /**
  * Class PlaceController
@@ -17,10 +22,8 @@ use Symfony\Component\HttpFoundation\Response;
 class PlaceController extends Controller
 {
 
-
     /**
-     * @Route("/import/places", name="places_extract")
-     * @Method({"GET"})
+     * @Get("/import/places")
      */
     public function importPlacesFromJson()
     {
@@ -47,10 +50,9 @@ class PlaceController extends Controller
         return new JsonResponse('ok');
     }
 
-
     /**
-     * @Route("/list", name="places_list")
-     * @Method({"GET"})
+     * @Rest\View(serializerGroups={"place"})
+     * @Rest\Get("/places")
      */
     public function getlistPlaces()
     {
@@ -59,47 +61,41 @@ class PlaceController extends Controller
             ->findAll();
         /* @var $places Place[] */
 
-        $formatted = [];
-        foreach ($places as $place) {
-            $formatted[] = [
-                'id' => $place->getId() ,
-                'name' => $place->getName() ,
-                'address' => $place->getAddress() ,
-                'handicap_moteur' => $place->getHandicapMoteur() ,
-                'created_at' => $place->getHandicapMoteur() ,
-            ];
-        }
-
-
-        return new JsonResponse($formatted);
+        return $places;
 
     }
 
-
     /**
-     * @Route("/places/{place_id}", name="places_one")
-     * @Method({"GET"})
-     * @param Request $request
-     * @return JsonResponse
+     * @Rest\View(serializerGroups={"place"})
+     * @Rest\Get("/places/{id}")
      */
     public function getPlaceAction(Request $request)
     {
         $place = $this->get('doctrine.orm.entity_manager')
             ->getRepository('AppBundle:Place')
-            ->find($request->get('place_id'));
+            ->find($request->get('id'));
 
         if (empty($place)) {
-            return new JsonResponse(['message' => 'Place not found'] , Response::HTTP_NOT_FOUND);
+            return \FOS\RestBundle\View\View::create(['message' => 'Place not found'], Response::HTTP_NOT_FOUND);
         }
         /* @var $formatted Place[] */
+        return $place;
 
-        $formatted = [
-            'id' => $place->getId() ,
-            'name' => $place->getName() ,
-            'address' => $place->getAddress() ,
-        ];
+    }
 
-        return new JsonResponse($formatted);
+    /**
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT, serializerGroups={"place"})
+     * @Rest\Delete("/places/{id}")
+     */
+    public function removePlaceAction(Request $request)
+    {
+        $em = $this->get('doctrine.orm.entity_manager');
+        $place = $em->getRepository('AppBundle:Place')
+            ->find($request->get('id'));
+        /* @var $place Place */
+
+        $em->remove($place);
+        $em->flush();
     }
 
 }
