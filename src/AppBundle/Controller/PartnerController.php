@@ -41,12 +41,13 @@ class PartnerController extends Controller
         $places = $this->get('doctrine.orm.entity_manager')
             ->getRepository('AppBundle:Place')
             ->findAll();
+        /* @var $place Place */
 
         foreach ($places as $place) {
 
-            if ($user->preferencesMatch($place->getThemes())) {
+            $user->preferencesMatch($place->getThemes());
                 $suggestions[] = $place;
-            }
+
         }
 
         return $suggestions;

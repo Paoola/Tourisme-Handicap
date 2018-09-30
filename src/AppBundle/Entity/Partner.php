@@ -21,6 +21,11 @@ class Partner
      */
     protected $preferences;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Theme", mappedBy="place")
+     * @var Theme[]
+     */
+    protected $theme;
 
     public function __construct()
     {
@@ -129,21 +134,17 @@ class Partner
         $this->preferences->removeElement($preference);
     }
 
-
-    /**
-     * @param $themes
-     * @return bool
-     */
     public function preferencesMatch($themes)
     {
         $matchValue = 0;
         foreach ($this->preferences as $preference) {
-            foreach ($themes as $theme) {
+            foreach ($this->theme as $theme) {
+
                 if ($preference->match($theme)) {
                     $matchValue += $preference->getValue() * $theme->getValue();
                 }
             }
         }
-        return $matchValue >= self::MATCH_VALUE_THRESHOLD;
+        return  $matchValue >= self::MATCH_VALUE_THRESHOLD;
     }
 }

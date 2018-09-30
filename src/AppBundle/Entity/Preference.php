@@ -14,6 +14,12 @@ use Doctrine\ORM\Mapping as ORM;
 class Preference
 {
     /**
+     * @ORM\ManyToOne(targetEntity="Partner", inversedBy="preferences")
+     * @var Partner
+     */
+    protected $user;
+
+    /**
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
@@ -29,12 +35,6 @@ class Preference
      * @ORM\Column(type="integer")
      */
     protected $value;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="Partner", inversedBy="preferences")
-     * @var Partner
-     */
-    protected $user;
 
     public function getId()
     {
@@ -75,6 +75,7 @@ class Preference
     {
         $this->user = $user;
     }
+
     public function match(Theme $theme)
     {
         return $this->name === $theme->getName();

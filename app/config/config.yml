@@ -81,3 +81,4 @@ fos_rest:
         rules:
             - { path: '^/', priorities: ['json'], fallback_format: 'json' }
 
+

@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Form\PlaceType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -48,6 +49,26 @@ class PlaceController extends Controller
         }
 
         return new JsonResponse('ok');
+    }
+    /**
+     * @Rest\View(statusCode=Response::HTTP_CREATED)
+     * @Rest\Post("/places")
+     */
+    public function postPlacesAction(Request $request)
+    {
+        $place = new Place();
+        $form = $this->createForm(PlaceType::class, $place);
+
+        $form->submit($request->request->all()); // Validation des données
+
+        if ($form->isValid()) {
+            $em = $this->get('doctrine.orm.entity_manager');
+            $em->persist($place);
+            $em->flush();
+            return $place;
+        } else {
+            return $form;
+        }
     }
 
     /**
