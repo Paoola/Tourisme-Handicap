@@ -6,6 +6,8 @@ AppBundle\Entity\Place:
             groups: ['place','theme']
         address:
             groups: ['place', 'theme']
+        handicap_moteur:
+            groups: ['place', 'theme']
         themes:
             groups: ['place']
 
